@@ -1,0 +1,11 @@
+- hosts: 172.31.46.13
+  become: True
+  tasks:
+    - name: install required packages
+      dnf:
+        name: "{{item}}"
+        state: present
+      loop:
+        - git
+        - docker
+        - maven 

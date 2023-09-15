@@ -1,0 +1,27 @@
+- hosts: 172.31.46.13
+  become: True 
+  tasks:
+    - name: install java 17
+      dnf:
+        name: java-11-amazon-corretto-devel.x86_64
+        state: present
+    - name: check tar file exists
+      stat:
+        path:  /opt/apache-tomcat-9.0.80
+      register: stat_result
+    - name: Download tom cat tar file
+      get_url:
+        url: https://downloads.apache.org/tomcat/tomcat-9/v9.0.80/bin/apache-tomcat-9.0.80.tar.gz
+        dest: /opt/
+      when: not stat_result.stat.exists
+
+    - name: extract tar fileA
+      unarchive:
+        src: /opt/apache-tomcat-9.0.80.tar.gz
+        dest: /opt/
+        remote_src: yes
+      when: not stat_result.stat.exists
+    - name: remove tomcat tar
+      file:
+        path: /opt/apache-tomcat-9.0.80.tar.gz
+        state: absent

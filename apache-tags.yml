@@ -1,0 +1,31 @@
+- hosts: 172.31.46.13
+  become: True
+  tasks: 
+    - name: install apache 
+      dnf: 
+        name: httpd 
+        state: present
+      tags:
+        - install
+    - name: copy index file on to apache server
+      copy: 
+        src: index.html
+        dest: /var/www/html/
+      tags:
+        - deploy
+      notify:
+        - restart apache
+    - name: start and enable apache server
+      service: 
+        name: httpd
+        state: started
+        enabled: True
+      tags:
+        - start
+        - enable
+  handlers:
+    - name: restart apache
+      service:
+        name: httpd
+        state: restarted
+
